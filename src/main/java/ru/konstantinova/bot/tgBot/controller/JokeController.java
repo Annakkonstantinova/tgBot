@@ -3,6 +3,7 @@ package ru.konstantinova.bot.tgBot.controller;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.konstantinova.bot.tgBot.model.Joke;
 import ru.konstantinova.bot.tgBot.service.JokeService;
@@ -11,10 +12,10 @@ import ru.konstantinova.bot.tgBot.service.JokeService;
 @RequiredArgsConstructor
 @RequestMapping("/jokes")
 public class JokeController {
-
     private final JokeService jokeService;
 
     @PostMapping
+    @PreAuthorize("hasAuthority('JOKE_CREATE')")
     public ResponseEntity<Joke> createJoke(@RequestBody Joke joke) {
         return ResponseEntity.ok(jokeService.createJoke(joke));
     }
@@ -31,12 +32,14 @@ public class JokeController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('JOKE_UPDATE')")
     public ResponseEntity<Void> updateJoke(@PathVariable("id") Long id, @RequestBody Joke joke) {
         jokeService.updateJoke(id, joke);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('JOKE_DELETE')")
     public ResponseEntity<Void> deleteJoke(@PathVariable Long id) {
         jokeService.deleteJoke(id);
         return ResponseEntity.noContent().build();
